@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Fracture Detection Dashboard</title>
+		<!-- Bootstrap CSS -->
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+			crossorigin="anonymous"
+		/>
+		<script
+			src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+			integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+			integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+			crossorigin="anonymous"
+		></script>
+
+		<link rel="stylesheet" href="style.css" />
+
+		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+		<style>
+			@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
+
+			/* ---------- General ---------- */
+
+			:root {
+				--color-primary: #79ac78;
+				--color-secondary: #d0e7d2;
+				--color-danger: #ff0060;
+				--color-success: #1b9c85;
+				--color-warning: #f7c52e;
+				--color-stationary: #6c9bcf;
+				--color-white: #fff;
+				--color-info-dark: #7d8da1;
+				--color-dark: #363949;
+				--color-light: rgba(132, 139, 200, 0.18);
+				--color-dark-variant: #677483;
+				--color-background: #f6f6f9;
+
+				--color-icon-text: var(--color-white);
+				--color-bg-hover: var(--color-white);
+
+				--card-border-radius: 2rem;
+				--border-radius-1: 0.4rem;
+				--border-radius-2: 1.2rem;
+
+				--card-padding: 1.8rem;
+				--padding-1: 1.2rem;
+
+				--box-shadow: 0 2rem 3rem var(--color-light);
+			}
+
+			.dark-mode-variables {
+				--color-background: #181a1e;
+				--color-white: #202528;
+				--color-dark: #edeffd;
+				--color-dark-variant: #a3bdcc;
+				--color-light: rgba(0, 0, 0, 0.4);
+				--box-shadow: 0 2rem 3rem var(--color-light);
+			}
+
+			* {
+				margin: 0;
+				padding: 0;
+				outline: 0;
+				appearance: 0;
+				border: 0;
+				text-decoration: none;
+				box-sizing: border-box;
+			}
+
+			html {
+				font-size: 14px;
+			}
+
+			body {
+				width: 100vw;
+				height: 100vh;
+				font-family: "Poppins", sans-serif;
+				font-size: 0.88rem;
+				/* overflow-x: hidden; */
+				color: var(--color-dark);
+				background-color: var(--color-background);
+			}
+
+			a {
+				color: var(--color-dark);
+			}
+
+			img {
+				display: block;
+				width: 100%;
+				object-fit: cover;
+			}
+
+			/* ---------- Typography ---------- */
+
+			h1 {
+				font-weight: 800;
+				font-size: 1.8rem;
+			}
+
+			h2 {
+				font-weight: 600;
+				font-size: 1.4rem;
+			}
+
+			h3 {
+				font-weight: 400;
+				font-size: 0.87rem;
+			}
+
+			small {
+				font-size: 0.76rem;
+			}
+
+			.text-justify {
+				text-align: justify;
+				text-justify: inter-word;
+			}
+
+			b {
+				color: var(--color-dark);
+			}
+
+			img {
+				display: block;
+				width: 100%;
+				object-fit: cover;
+			}
+
+			.form-control,
+			.btn {
+				font-size: inherit;
+			}
+
+			.accordion-button:not(.collapsed) {
+				color: var(--bs-accordion-btn-color);
+				background-color: var(--bs-accordion-btn-bg);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container my-5" style="max-width: 500px">
+			<h1 class="text-center">
+				Bone Fracture Detection <br />
+				Application
+			</h1>
+
+			<div class="card mt-4">
+				<div class="card-body">
+					<div>
+						<b>Bone Fracture</b>
+						<!-- BONE FRACTURE INFORMATION -->
+						<p class="m-0 text-justify">
+							Bone Fractures are a medical condition where there is a partial or
+							complete break in the continuity of the bone. Fractures occur when
+							the bone is subjected to forces that exceed its strength,
+							typically from trauma, stress, or underlying health conditions
+							that weaken the bone.
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="card mt-4">
+				<div class="card-body">
+					<div class="mb-3">
+						<label for="imageInput" class="form-label"
+							><b>Upload Image</b></label
+						>
+						<input
+							class="form-control"
+							type="file"
+							id="imageInput"
+							name="image"
+							required
+						/>
+					</div>
+					<button type="button" onclick="submit()" class="btn btn-primary">
+						Detect Fracture
+					</button>
+				</div>
+			</div>
+
+			<div id="resultSection" class="card mt-4 d-none">
+				<div class="card-body">
+					<b>Result</b>
+					<p id="statusMessage"></p>
+					<img
+						id="resultImage"
+						src=""
+						alt="Detection Result"
+						class="img-fluid border d-none"
+					/>
+				</div>
+			</div>
+
+			<div class="card mt-4">
+				<div class="card-body">
+					<div>
+						<div class="accordion">
+							<div class="arccordion-item">
+								<p class="accordion-header">
+									<button
+										class="accordion-button p-2"
+										type="button"
+										data-bs-toggle="collapse"
+										data-bs-target="#backgroundResearch"
+										aria-expanded="true"
+										aria-controls="backgroundResearch"
+									>
+										<b>Background Research</b>
+									</button>
+								</p>
+								<div
+									class="accordion-collapse collapse show"
+									id="backgroundResearch"
+									aria-labelledby="backgroundResearch"
+								>
+									<div class="accordion-body">
+										<p class="m-2 text-justify">
+											&emsp;&emsp;&emsp;Health is a fundamental aspect of human
+											life, especially in handling trauma cases such as bone
+											fractures. Fractures can occur due to accidents, falls, or
+											intense physical activity and require immediate treatment
+											to prevent serious complications like infection or
+											permanent tissue damage. X-ray imaging is a primary tool
+											for diagnosing fractures; however, manual analysis of
+											these images is time-consuming, requires specialized
+											skills, and is prone to human error, particularly in
+											high-volume cases.
+										</p>
+										<p class="m-2 text-justify">
+											&emsp;&emsp;&emsp;Advances in technology have introduced
+											opportunities in the medical field, including the use of
+											artificial intelligence to support image analysis. One
+											popular algorithm, YOLO (You Only Look Once), based on
+											Convolutional Neural Networks (CNN), is known for its
+											speed and accuracy in object detection. YOLOv8, the latest
+											version, brings significant improvements in accuracy,
+											efficiency, and processing speed. While it has been
+											successfully applied in fields like security monitoring
+											and industrial object detection, its application for
+											detecting fractures in X-ray images is still
+											underexplored.
+										</p>
+										<p class="m-2 text-justify">
+											&emsp;&emsp;&emsp;This study aims to address this gap by
+											optimizing YOLOv8 to detect bone fractures automatically.
+											The primary challenge lies in accurately identifying
+											fractures that vary in shape, size, and location. The
+											research seeks to evaluate the effectiveness of YOLOv8 in
+											supporting medical professionals, enhancing diagnostic
+											accuracy and efficiency. This approach is expected to
+											accelerate medical decision-making and provide significant
+											benefits to patients.
+										</p>
+									</div>
+								</div>
+							</div>
+							<div class="arccordion-item">
+								<p class="accordion-header">
+									<button
+										class="accordion-button p-2"
+										type="button"
+										data-bs-toggle="collapse"
+										data-bs-target="#scopeAndLimit"
+										aria-expanded="true"
+										aria-controls="scopeAndLimit"
+									>
+										<b>Scope and Limitations of the Research</b>
+									</button>
+								</p>
+								<div
+									class="accordion-collapse collapse show"
+									id="scopeAndLimit"
+									aria-labelledby="scopeAndLimit"
+								>
+									<div class="accordion-body">
+										<ul>
+											<li class="text-justify">
+												This study solely utilizes X-ray images available on the
+												Roboflow website as the primary dataset for bone
+												fracture detection.
+											</li>
+											<li class="text-justify">
+												This study focuses exclusively on developing the YOLOv8
+												architecture for bone fracture detection.
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- JavaScript -->
+		<script>
+			async function submit() {
+				const formData = new FormData();
+				const fileInput = document.getElementById("imageInput");
+				formData.append("image", fileInput.files[0]);
+
+				const resultSection = document.getElementById("resultSection");
+				const statusMessage = document.getElementById("statusMessage");
+				const resultImage = document.getElementById("resultImage");
+
+				try {
+					// Call the API
+					const response = await axios.post(
+						"http://127.0.0.1:8000/detect/fracture",
+						formData,
+						{
+							headers: {
+								"Content-Type": "multipart/form-data",
+							},
+						}
+					);
+
+					console.log(response);
+
+					// Show the result
+					const data = response.data;
+					if (data.status === "success") {
+						statusMessage.textContent = data.message;
+						resultImage.src = data.data.image_url;
+						resultImage.classList.remove("d-none");
+						resultSection.classList.remove("d-none");
+					} else {
+						statusMessage.textContent = data.message;
+						resultSection.classList.remove("d-none");
+					}
+				} catch (error) {
+					console.error(error);
+					statusMessage.textContent =
+						"Error occurred while processing the image.";
+					resultSection.classList.remove("d-none");
+				}
+			}
+		</script>
+	</body>
+</html>
