@@ -191,6 +191,16 @@
 				</div>
 			</div>
 
+			<div id="loadingSection" class="card mt-4 d-none">
+				<div class="card-body text-center">
+					<b>Detecting</b>
+					<br />
+					<div class="spinner-border text-primary" role="status">
+						<span class="visually-hidden">Loading...</span>
+					</div>
+				</div>
+			</div>
+
 			<div id="resultSection" class="card mt-4 d-none">
 				<div class="card-body">
 					<b>Result</b>
@@ -317,6 +327,9 @@
 				const statusMessage = document.getElementById("statusMessage");
 				const resultImage = document.getElementById("resultImage");
 
+				const loadingSection = document.getElementById("loadingSection");
+				loadingSection.classList.remove("d-none");
+
 				try {
 					// Call the API
 					const response = await axios.post(
@@ -336,16 +349,19 @@
 					if (data.status === "success") {
 						statusMessage.textContent = data.message;
 						resultImage.src = data.data.image_url;
+						loadingSection.classList.add("d-none");
 						resultImage.classList.remove("d-none");
 						resultSection.classList.remove("d-none");
 					} else {
 						statusMessage.textContent = data.message;
+						loadingSection.classList.add("d-none");
 						resultSection.classList.remove("d-none");
 					}
 				} catch (error) {
 					console.error(error);
 					statusMessage.textContent =
 						"Error occurred while processing the image.";
+					loadingSection.classList.add("d-none");
 					resultSection.classList.remove("d-none");
 				}
 			}

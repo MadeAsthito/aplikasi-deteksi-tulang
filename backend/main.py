@@ -65,13 +65,17 @@ def detect_fracture(image: Image):
     for result in results:
         result.save(filename="output.jpg")
 
+        num_fractures = len(result.boxes)
+        probabilities = result.boxes.conf
         url = upload_image(OUTPUT_PATH)
     
     return {
         "status": "success", 
         "message": "Detection is successfull", 
         "data": {
-            "image_url" : url
+            "image_url" : url,
+            "num_fractures": num_fractures,
+            "probabilities": probabilities
         }
     }
     
